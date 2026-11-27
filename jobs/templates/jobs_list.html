@@ -1,0 +1,140 @@
+{% extends 'base.html' %}
+
+{% block title %}Available Jobs - Job Portal{% endblock %}
+
+{% block content %}
+
+<div style="max-width: 850px; margin: 40px auto; padding: 0 20px;">
+
+    <!-- Search and Filter Card -->
+    <div
+        style="background: #ffffff; padding: 25px; border-radius: 8px; border: 1px solid #e2e8f0; margin-bottom: 35px; box-shadow: 0 4px 6px rgba(0,0,0,0.02);">
+        <form method="GET" action="{% url 'jobs_list' %}" style="display: flex; flex-direction: column; gap: 20px;">
+
+            <!-- Search Bar Row -->
+            <div style="display: flex; gap: 10px;">
+                <input type="text" name="q" value="{{ query }}" placeholder="Search job title or company..."
+                    style="flex: 1; padding: 10px 14px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 14px; outline: none;">
+                <button type="submit"
+                    style="background: #2563eb; color: white; border: none; padding: 10px 20px; border-radius: 6px; font-size: 14px; font-weight: 500; cursor: pointer;">Search</button>
+            </div>
+
+            <!-- Filters Row -->
+            <div
+                style="display: flex; flex-wrap: wrap; gap: 15px; align-items: flex-end; border-top: 1px solid #f1f5f9; padding-top: 15px;">
+
+                <!-- Category Filter -->
+                <div style="display: flex; flex-direction: column; gap: 5px;">
+                    <label for="category" style="font-size: 12px; font-weight: 600; color: #4b5563;">Category</label>
+                    <select name="category" id="category"
+                        style="padding: 8px 12px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 14px; background: white; outline: none;">
+                        <option value="">All Categories</option>
+                        {% for cat in categories %}
+                        <option value="{{ cat.id }}" {% if cat.is_selected %}selected{% endif %}>{{ cat.name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <!-- Min Salary -->
+                <div style="display: flex; flex-direction: column; gap: 5px;">
+                    <label for="min_salary" style="font-size: 12px; font-weight: 600; color: #4b5563;">Min Salary
+                        (₹)</label>
+                    <input type="number" name="min_salary" id="min_salary" value="{{ min_salary }}"
+                        placeholder="e.g. 300000" min="0" step="any"
+                        style="padding: 8px 12px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 14px; width: 140px; outline: none;">
+                </div>
+
+                <!-- Max Salary -->
+                <div style="display: flex; flex-direction: column; gap: 5px;">
+                    <label for="max_salary" style="font-size: 12px; font-weight: 600; color: #4b5563;">Max Salary
+                        (₹)</label>
+                    <input type="number" name="max_salary" id="max_salary" value="{{ max_salary }}"
+                        placeholder="e.g. 1500000" min="0" step="any"
+                        style="padding: 8px 12px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 14px; width: 140px; outline: none;">
+                </div>
+
+                <!-- Filter Actions -->
+                <div style="display: flex; align-items: center; gap: 12px; padding-bottom: 2px;">
+                    <button type="submit"
+                        style="background: #0f172a; color: white; border: none; padding: 9px 16px; border-radius: 6px; font-size: 13px; font-weight: 500; cursor: pointer;">Apply
+                        Filters</button>
+                    <a href="{% url 'jobs_list' %}"
+                        style="color: #64748b; font-size: 13px; text-decoration: none;">Reset</a>
+                </div>
+
+            </div>
+        </form>
+    </div>
+
+    <!-- Page Heading -->
+    <h1
+        style="color: #2c3e50; margin-bottom: 25px; font-size: 28px; border-bottom: 2px solid #eaeaea; padding-bottom: 10px;">
+        Available Job Openings
+    </h1>
+
+    <!-- Job Listings -->
+    {% for job in page_obj %}
+    <div
+        style="background: #ffffff; padding: 25px; border-radius: 8px; border: 1px solid #e2e8f0; margin-bottom: 20px; box-shadow: 0 2px 4px rgba(0,0,0,0.02);">
+
+        <a href="{% url 'job_details' job.slug %}" style="text-decoration: none;">
+            <h2 style="color: #2563eb; margin: 0 0 10px 0; font-size: 20px;">{{ job.title }}</h2>
+        </a>
+
+        <div style="display: flex; gap: 15px; color: #4b5563; font-size: 14px; margin-bottom: 12px; flex-wrap: wrap;">
+            <span>🏢 <strong>{{ job.company }}</strong></span>
+            <span>📍 {{ job.location }}</span>
+            <span>💰 ₹{{ job.salary|floatformat:0 }}</span>
+            <span style="background: #eff6ff; color: #1d4ed8; padding: 2px 8px; border-radius: 4px; font-size: 12px;">
+                {{ job.category.name }}</span>
+        </div>
+
+        <p style="color: #374151; font-size: 15px; line-height: 1.5; margin: 0 0 15px 0;">
+            {{ job.description|truncatechars:150 }}
+        </p>
+
+        <!-- Dynamic Action Buttons based on User Role -->
+        {% if user.is_authenticated %}
+        {% if user.profile.role == 'employer' and job.employer == user %}
+        <a href="{% url 'edit_job' job.slug %}"
+            style="background: #e2e8f0; color: #1e293b; padding: 6px 12px; border-radius: 4px; text-decoration: none; font-size: 13px; font-weight: 500; display: inline-block;">Edit
+            Job</a>
+        <a href="{% url 'delete_job' job.slug %}"
+            style="background: #fee2e2; color: #991b1b; padding: 6px 12px; border-radius: 4px; text-decoration: none; font-size: 13px; font-weight: 500; display: inline-block; margin-left: 5px;">Delete
+            Job</a>
+        {% elif user.profile.role == 'job_seeker' %}
+        <a href="{% url 'apply_job' job.slug %}"
+            style="background: #2563eb; color: white; padding: 6px 12px; border-radius: 4px; text-decoration: none; font-size: 13px; font-weight: 500; display: inline-block;">Apply
+            Now</a>
+        {% endif %}
+        {% endif %}
+
+    </div>
+    {% empty %}
+    <div style="text-align: center; padding: 40px; background: #f8fafc; border-radius: 8px; color: #64748b;">
+        <p style="font-size: 16px;">No jobs match your search or filters.</p>
+    </div>
+    {% endfor %}
+
+</div>
+
+<!-- Pagination -->
+<div class="pagination" style="text-align: center; margin: 30px 0;">
+    {% if page_obj.has_previous %}
+    <a
+        href="?q={{ query }}&category={{ selected_category }}&min_salary={{ min_salary }}&max_salary={{ max_salary }}&page=1">First</a>
+    <a
+        href="?q={{ query }}&category={{ selected_category }}&min_salary={{ min_salary }}&max_salary={{ max_salary }}&page={{ page_obj.previous_page_number }}">Previous</a>
+    {% endif %}
+
+    <span style="margin: 0 15px;">Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</span>
+
+    {% if page_obj.has_next %}
+    <a
+        href="?q={{ query }}&category={{ selected_category }}&min_salary={{ min_salary }}&max_salary={{ max_salary }}&page={{ page_obj.next_page_number }}">Next</a>
+    <a
+        href="?q={{ query }}&category={{ selected_category }}&min_salary={{ min_salary }}&max_salary={{ max_salary }}&page={{ page_obj.paginator.num_pages }}">Last</a>
+    {% endif %}
+</div>
+
+{% endblock %}

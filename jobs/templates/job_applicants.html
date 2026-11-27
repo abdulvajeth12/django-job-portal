@@ -1,0 +1,86 @@
+{% extends 'base.html' %}
+{% block title %}Applicants for {{ job.title }}{% endblock %}
+
+{% block content %}
+<div style="max-width: 900px; margin: 40px auto; padding: 0 20px;">
+    <a href="{% url 'employer_dashboard' %}"
+        style="text-decoration: none; color: #2563eb; font-size: 14px; font-weight: 500;">← Back to My Jobs</a>
+
+    <h1 style="color: #2c3e50; margin-top: 15px; margin-bottom: 5px; font-size: 26px;">Applicants for: {{ job.title }}
+    </h1>
+    <p style="color: #64748b; margin-bottom: 25px;">Total Applications: {{ applications.count }}</p>
+
+    {% for app in applications %}
+    <div
+        style="background: white; padding: 25px; border-radius: 8px; border: 1px solid #e2e8f0; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 20px;">
+        <div style="flex: 1; min-width: 280px;">
+            <h3 style="margin: 0 0 8px 0; color: #1e293b;">👤 {{ app.applicant.username }}</h3>
+            <p style="margin: 0 0 6px 0; font-size: 14px; color: #4b5563;">
+                Email: {{ app.applicant.email|default:"Not provided" }}</p>
+
+            {% if app.applicant.profile.phone %}
+            <p style="margin: 0 0 6px 0; font-size: 14px; color: #4b5563;">📞 Phone: {{ app.applicant.profile.phone }}
+            </p>
+            {% endif %}
+
+            {% if app.applicant.profile.skills %}
+            <p style="margin: 0 0 8px 0; font-size: 14px; color: #4b5563;">💡 <strong>Skills:</strong>
+                {{ app.applicant.profile.skills }}</p>
+            {% endif %}
+
+            {% if app.applicant.profile.bio %}
+            <p
+                style="margin: 0 0 10px 0; font-size: 14px; color: #374151; background: #f8fafc; padding: 8px; border-radius: 4px;">
+                {{ app.applicant.profile.bio }}</p>
+            {% endif %}
+
+            <p style="margin: 0; font-size: 13px; color: #64748b;">Applied on: {{ app.applied_at|date:"M d, Y - H:i" }}
+            </p>
+
+            {% if app.applicant.profile.resume %}
+            <div style="margin-top: 12px;">
+                <a href="{{ app.applicant.profile.resume.url }}" target="_blank"
+                    style="background: #eff6ff; color: #1d4ed8; padding: 6px 12px; border-radius: 4px; text-decoration: none; font-size: 13px; font-weight: 500; display: inline-block;">
+                    📄 Download / View Resume
+                </a>
+            </div>
+            {% endif %}
+        </div>
+
+        <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 12px;">
+            <!-- Status Badge -->
+            {% if app.status == 'accepted' %}
+            <span
+                style="padding: 4px 10px; border-radius: 4px; font-size: 12px; font-weight: 600; background: #dcfce7; color: #166534;">
+                {{ app.get_status_display }}
+            </span>
+            {% elif app.status == 'rejected' %}
+            <span
+                style="padding: 4px 10px; border-radius: 4px; font-size: 12px; font-weight: 600; background: #fee2e2; color: #991b1b;">
+                {{ app.get_status_display }}
+            </span>
+            {% else %}
+            <span
+                style="padding: 4px 10px; border-radius: 4px; font-size: 12px; font-weight: 600; background: #fef3c7; color: #92400e;">
+                {{ app.get_status_display }}
+            </span>
+            {% endif %}
+
+            <!-- Actions form to update status -->
+            <form method="POST" style="display: flex; gap: 6px; margin: 0;">
+                {% csrf_token %}
+                <input type="hidden" name="application_id" value="{{ app.id }}">
+                <button type="submit" name="status" value="accepted"
+                    style="background: #16a34a; color: white; border: none; padding: 6px 12px; border-radius: 4px; font-size: 12px; cursor: pointer;">Accept</button>
+                <button type="submit" name="status" value="rejected"
+                    style="background: #dc2626; color: white; border: none; padding: 6px 12px; border-radius: 4px; font-size: 12px; cursor: pointer;">Reject</button>
+            </form>
+        </div>
+    </div>
+    {% empty %}
+    <div style="text-align: center; padding: 40px; background: #f8fafc; border-radius: 8px; color: #64748b;">
+        <p>No candidates have applied for this job yet.</p>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}

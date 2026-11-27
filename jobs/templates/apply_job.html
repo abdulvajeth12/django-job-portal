@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+{% block title %}Apply for {{ job.title }}{% endblock %}
+{% block content %}
+<div
+    style="max-width: 600px; margin: 40px auto; background: white; padding: 30px; border-radius: 8px; border: 1px solid #e2e8f0;">
+    <h2 style="color: #2c3e50; margin-top: 0;">Apply for {{ job.title }}</h2>
+    <p><strong>Company:</strong> {{ job.company }}</p>
+    <p><strong>Location:</strong> {{ job.location }}</p>
+    <p><strong>Salary:</strong> ₹{{ job.salary|floatformat:0 }}</p>
+
+    {% if just_applied %}
+    <div style="background: #dcfce7; color: #166534; padding: 12px; border-radius: 6px; margin-bottom: 20px;">
+        Application submitted successfully!
+    </div>
+    <a href="{% url 'jobs_list' %}"
+        style="background: #e2e8f0; color: #1e293b; padding: 10px 16px; border-radius: 6px; text-decoration: none;">Back
+        to Jobs</a>
+
+    {% elif already_applied %}
+    <div style="background: #fef3c7; color: #92400e; padding: 12px; border-radius: 6px; margin-bottom: 20px;">
+        You have already applied for this position.
+    </div>
+    <a href="{% url 'jobs_list' %}"
+        style="background: #e2e8f0; color: #1e293b; padding: 10px 16px; border-radius: 6px; text-decoration: none;">Back
+        to Jobs</a>
+
+    {% else %}
+    <form method="POST">
+        {% csrf_token %}
+        <p style="color: #4b5563; margin-bottom: 20px;">Clicking confirm will submit your profile details and
+            application to the employer.</p>
+        <button type="submit"
+            style="background: #2563eb; color: white; border: none; padding: 10px 20px; font-size: 15px; font-weight: 600; border-radius: 6px; cursor: pointer;">
+            Confirm Application
+        </button>
+        <a href="{% url 'jobs_list' %}" style="margin-left: 15px; color: #64748b; text-decoration: none;">Cancel</a>
+    </form>
+    {% endif %}
+</div>
+{% endblock %}

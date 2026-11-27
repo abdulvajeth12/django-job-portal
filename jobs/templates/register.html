@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+
+{% block title %}Register - Job Portal{% endblock %}
+
+{% block content %}
+<div
+    style="max-width: 450px; margin: 50px auto; background: #ffffff; padding: 30px; border-radius: 8px; border: 1px solid #e2e8f0; box-shadow: 0 4px 6px rgba(0,0,0,0.02);">
+
+    <h2 style="color: #1e293b; margin-top: 0; margin-bottom: 20px; font-size: 24px; text-align: center;">Create an
+        Account</h2>
+
+    <form method="post" style="display: flex; flex-direction: column; gap: 15px;">
+        {% csrf_token %}
+
+        <!-- Django Form Errors / Fields -->
+        {{ form.as_p }}
+
+        <!-- Custom Role Selector Field -->
+        <div style="display: flex; flex-direction: column; gap: 5px;">
+            <label for="role" style="font-size: 13px; font-weight: 600; color: #4b5563;">I want to register as:</label>
+            <select name="role" id="role"
+                style="padding: 10px 12px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 14px; background: white; outline: none;">
+                <option value="job_seeker">Job Seeker (Find & Apply for Jobs)</option>
+                <option value="employer">Employer (Post & Manage Jobs)</option>
+            </select>
+        </div>
+
+        <button type="submit"
+            style="background: #2563eb; color: white; border: none; padding: 12px; border-radius: 6px; font-size: 14px; font-weight: 500; cursor: pointer; margin-top: 10px;">Register</button>
+    </form>
+
+    <p style="text-align: center; margin-top: 20px; font-size: 14px; color: #64748b;">
+        Already have an account? <a href="{% url 'user_login' %}"
+            style="color: #2563eb; text-decoration: none; font-weight: 500;">Login here</a>
+    </p>
+</div>
+{% endblock %}

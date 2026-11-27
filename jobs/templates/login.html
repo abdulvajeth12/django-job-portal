@@ -1,0 +1,69 @@
+{% extends 'base.html' %}
+
+{% block title %}Login - Job Portal{% endblock %}
+
+{% block content %}
+<div
+    style="max-width: 400px; margin: 60px auto; background: #ffffff; padding: 35px; border-radius: 8px; border: 1px solid #e2e8f0; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);">
+
+    <h2
+        style="color: #2c3e50; margin-top: 0; margin-bottom: 25px; font-size: 24px; text-align: center; border-bottom: 2px solid #eaeaea; padding-bottom: 12px;">
+        Welcome Back
+    </h2>
+
+    {% if form.errors %}
+    <div
+        style="background: #fee2e2; color: #991b1b; padding: 10px 15px; border-radius: 6px; font-size: 14px; margin-bottom: 20px;">
+        Your username and password didn't match. Please try again.
+    </div>
+    {% endif %}
+
+    <form method="post">
+        {% csrf_token %}
+
+        <div style="margin-bottom: 20px;">
+            <label for="{{ form.username.id_for_label }}"
+                style="display: block; font-weight: 600; color: #374151; margin-bottom: 6px; font-size: 14px;">Username</label>
+            {{ form.username }}
+        </div>
+
+        <div style="margin-bottom: 25px;">
+            <label for="{{ form.password.id_for_label }}"
+                style="display: block; font-weight: 600; color: #374151; margin-bottom: 6px; font-size: 14px;">Password</label>
+            {{ form.password }}
+        </div>
+
+        <button type="submit"
+            style="width: 100%; background: #2563eb; color: white; border: none; padding: 12px; font-size: 15px; font-weight: 600; border-radius: 6px; cursor: pointer; transition: background 0.2s;">
+            Log In
+        </button>
+    </form>
+
+    <p style="text-align: center; margin-top: 25px; font-size: 14px; color: #64748b;">
+        Don't have an account? <a href="{% url 'register' %}"
+            style="color: #2563eb; text-decoration: none; font-weight: 500;">Register here</a>
+    </p>
+
+</div>
+
+<style>
+    /* Clean styling for Django auth form default input fields */
+    form input[type="text"],
+    form input[type="password"] {
+        width: 100%;
+        padding: 10px 12px;
+        border: 1px solid #cbd5e1;
+        border-radius: 6px;
+        font-size: 14px;
+        box-sizing: border-box;
+        outline: none;
+        transition: border-color 0.2s;
+    }
+
+    form input[type="text"]:focus,
+    form input[type="password"]:focus {
+        border-color: #2563eb;
+        box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+    }
+</style>
+{% endblock %}

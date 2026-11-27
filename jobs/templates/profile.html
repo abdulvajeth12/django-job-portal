@@ -1,0 +1,67 @@
+{% extends 'base.html' %}
+
+{% block title %}My Profile{% endblock %}
+
+{% block content %}
+<div
+    style="max-width: 600px; margin: 40px auto; background: white; padding: 35px; border-radius: 8px; border: 1px solid #e2e8f0; box-shadow: 0 4px 6px rgba(0,0,0,0.02);">
+
+    <h2
+        style="color: #1e293b; margin-top: 0; margin-bottom: 25px; font-size: 24px; border-bottom: 2px solid #eaeaea; padding-bottom: 12px;">
+        Candidate Profile & Resume
+    </h2>
+
+    <form method="POST" enctype="multipart/form-data" style="display: flex; flex-direction: column; gap: 20px;">
+        {% csrf_token %}
+
+        {{ form.as_p }}
+
+        {% if profile.resume %}
+        <div
+            style="background: #f8fafc; padding: 12px; border-radius: 6px; border: 1px solid #e2e8f0; font-size: 14px;">
+            <span>📄 Current Resume: </span>
+            <a href="{{ profile.resume.url }}" target="_blank"
+                style="color: #2563eb; text-decoration: none; font-weight: 500;">View Uploaded Resume</a>
+        </div>
+        {% endif %}
+
+        <button type="submit"
+            style="background: #2563eb; color: white; border: none; padding: 12px; font-size: 15px; font-weight: 600; border-radius: 6px; cursor: pointer;">
+            Save Profile
+        </button>
+    </form>
+
+</div>
+
+<style>
+    /* Styling for Django form fields inside profile */
+    form p {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+        margin: 0;
+        font-size: 14px;
+        font-weight: 600;
+        color: #374151;
+    }
+
+    form input[type="text"],
+    form input[type="file"],
+    form textarea {
+        padding: 10px 12px;
+        border: 1px solid #cbd5e1;
+        border-radius: 6px;
+        font-size: 14px;
+        font-weight: normal;
+        outline: none;
+        box-sizing: border-box;
+        width: 100%;
+    }
+
+    form input[type="text"]:focus,
+    form textarea:focus {
+        border-color: #2563eb;
+        box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+    }
+</style>
+{% endblock %}

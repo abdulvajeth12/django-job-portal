@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>{% block title %}Job Portal{% endblock %}</title>
+</head>
+
+<body
+    style="margin: 0; display: flex; flex-direction: column; min-height: 100vh; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #f8fafc; color: #1e293b;">
+
+    <!-- Header -->
+    <header
+        style="background: #1e3c72; color: white; padding: 15px 30px; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+        <h2 style="margin: 0; font-size: 20px;">
+            <a href="{% url 'jobs_list' %}" style="color: white; text-decoration: none;">JobPortal</a>
+        </h2>
+
+        <nav style="display: flex; gap: 20px; align-items: center;">
+            <a href="{% url 'jobs_list' %}"
+                style="color: #ffffff; text-decoration: none; font-size: 14px; font-weight: 500;">Home</a>
+            <a href="#" style="color: #ffffff; text-decoration: none; font-size: 14px;">About Us</a>
+            <a href="#" style="color: #ffffff; text-decoration: none; font-size: 14px;">Contact</a>
+
+            <!-- Dynamic Header Links based on Authentication & Role -->
+            {% if user.is_authenticated %}
+            {% if user.profile.role == 'employer' %}
+            <a href="{% url 'add_job' %}"
+                style="background: #2563eb; color: white; padding: 6px 14px; border-radius: 4px; text-decoration: none; font-size: 14px; font-weight: 500;">+
+                Add New Job</a>
+            <a href="{% url 'employer_dashboard' %}" style="color: #ffffff; text-decoration: none; font-size: 14px;">My
+                Jobs</a>
+
+            <span
+                style="font-size: 13px; color: #cbd5e1; background: rgba(255,255,255,0.1); padding: 4px 10px; border-radius: 20px;">{{user.username}}</span>
+
+            {% elif user.profile.role == 'job_seeker' %}
+            <a href="{% url 'my_applications' %}" style="color: #ffffff; text-decoration: none; font-size: 14px;">My
+                Applications</a>
+            <a href="{% url 'profile_view' %}" style="color: #ffffff; text-decoration: none; font-size: 14px;">My
+                Profile</a>
+            <span
+                style="font-size: 13px; color: #cbd5e1; background: rgba(255,255,255,0.1); padding: 4px 10px; border-radius: 20px;">{{user.username}}</span>
+            {% endif %}
+            <form method="post" action="{% url 'user_logout' %}" style="display: inline; margin: 0 0 0 5px;">
+                {% csrf_token %}
+                <button type="submit"
+                    style="background: none; border: none; color: #fca5a5; cursor: pointer; padding: 0; font-family: inherit; font-size: 14px; font-weight: 500;">Logout</button>
+            </form>
+            {% else %}
+            <a href="{% url 'user_login' %}"
+                style="color: #ffffff; text-decoration: none; font-size: 14px; font-weight: 500;">Login</a>
+            <a href="{% url 'register' %}"
+                style="background: #2563eb; color: white; padding: 6px 14px; border-radius: 4px; text-decoration: none; font-size: 14px; font-weight: 500;">Register</a>
+            {% endif %}
+        </nav>
+    </header>
+
+    <!-- Main Content -->
+    <main style="flex: 1; padding: 30px; max-width: 1000px; width: 100%; margin: 0 auto; box-sizing: border-box;">
+        {% block content %}
+        {% endblock %}
+    </main>
+
+    <!-- Footer -->
+
+    <footer style="background: #333; color: white; padding: 15px; text-align: center;">
+
+        <p style="margin: 0;">© 2026 JobPortal</p>
+
+    </footer>
+
+</body>
+
+</html>
